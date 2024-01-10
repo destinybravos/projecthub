@@ -9,14 +9,4 @@
         </div>
     </div>
 
-    <div class="py-3 px-3 bg-white rounded-xl">
-        <div class="bg-green-700 py-2 px-2 text-center text-gray-100 rounded-md mb-3">
-           New Updates
-        </div>
-
-        <div class="shadow-lg py-2 px-2 text-gray-700 bg-white text-center">
-            <p class="text-center text-xs mt-3 font-bold">Favour Amarachi.</p>
-            <small class="">23 Mins ago</small>
-        </div>
-    </div>
 </div>

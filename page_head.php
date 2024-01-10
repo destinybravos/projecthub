@@ -13,6 +13,9 @@ include_once 'connect.php';
         $num_rows = mysqli_num_rows($result);
         if($num_rows > 0){
             $user_data = mysqli_fetch_assoc($result);
+            if ($user_data['role'] == 'student') {
+                $supervisor = getSupervisor($user_data['id'], $conn);
+            }
         }else{
             // header('location:index.php');
         }
@@ -72,3 +75,31 @@ include_once 'connect.php';
         </a>
     </div>
 </div>
+
+<?php
+
+    function getSupervisor($stu_id, $conn){
+        $sql1 = "SELECT * FROM assign WHERE std_id = '$stu_id'";
+        if($result = mysqli_query($conn, $sql1)){
+            if(mysqli_num_rows($result) > 0){
+                $data = mysqli_fetch_assoc($result);
+                $sup_id = $data['supervisor_id'];
+                $sql = "SELECT * FROM users WHERE id = '$sup_id'";
+                if($result = mysqli_query($conn, $sql)){
+                    if(mysqli_num_rows($result) > 0){
+                        $data = mysqli_fetch_assoc($result);
+                        return $data['fullname'];
+                    }else{
+                        return "supervisor found";
+                    }
+                }else{
+                    return "record found";
+                }
+            }else{
+                return "assigned found";
+            }
+        }else{
+           return "Not found";
+        }
+    }
+?>

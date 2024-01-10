@@ -70,14 +70,12 @@
                                 ?>
                                     <input type="text" class="mb-3 border-none outline-none bg-gray-100" name="search" id="search" placeholder="Search for names..">
                                     <table id="myTable">
-                                        <thead >
-                                              
-                                                <th class="px-2 py-2">id</th>
-                                                <th class="px-2 py-2">fullname</th>
-                                                <th class="px-2 py-2">regno</th>
-                                                <th class="px-2 py-2">level</th>
-                                                <th class="px-2 py-2">programme</th>
-                                            
+                                        <thead class="capitalize">
+                                            <th class="px-2 py-2">id</th>
+                                            <th class="px-2 py-2">fullname</th>
+                                            <th class="px-2 py-2">regno</th>
+                                            <th class="px-2 py-2">level</th>
+                                            <th class="px-2 py-2">programme</th>
                                         </thead>
                                         <tbody>
                                             <div class="overflow-y-auto trow">
@@ -127,9 +125,7 @@
             </div>
         </div>
         <div class="w-full max-w-6xl mx-auto mt-5">
-            <h2 class="text-xl" id="selectedChapter">
-                
-            </h2>
+            <h2 class="text-xl" id="selectedChapter"></h2>
             <div id="current_content">
                 <!-- <div id="viewProposal" class="viewProposal"></div>
                 <div id="viewChapterOne" class="viewChapterOne hidden"></div>

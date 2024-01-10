@@ -15,6 +15,9 @@
                         <button class="py-2 px-2 text-white bg-green-700 rounded-lg shadow-lg">
                             Update Proposal
                         </button>
+                        <!-- <button class="py-2 px-2 text-white bg-green-500 rounded-lg shadow-lg">
+                            Add Comment
+                        </button> -->
                     </div>
                 </form>
                 <div>

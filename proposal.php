@@ -41,28 +41,29 @@
                             include_once 'connect.php';
                             $stdid = $user_data['id'];
                             $notify = new Notify;
+                            $sup_id = getSupervisorID($stdid, $conn);
 
                             if(isset($_POST['prosub'])){
-                                $topic=$_POST['topic'];
-                                $motivation=$_POST['motivation'];
-                                $proposal=$_POST['proposal'];
+                                $topic = $_POST['topic'];
+                                $motivation = $_POST['motivation'];
+                                $proposal = $_POST['proposal'];
                                 
                                 // Check if the student already have proposal
                                 $query = $conn->query("SELECT * FROM proposal WHERE student_id='$stdid '");
                                 if ($query->num_rows > 0) {
                                     $sql_string= "UPDATE proposal SET topic='$topic', motivation='$motivation', proposal='$proposal', status='review' WHERE student_id='$stdid '";
                                     if($conn->query($sql_string)){
-                                        $notify->sendNotification($stdid, '3', 'Just updated my proposal', 'proposal');   
-                                        echo 'Proposal  Successfully Updated';
+                                        $notify->sendNotification($stdid, $sup_id, $user_data['fullname'] . ' just updated my proposal', 'proposal');   
+                                        echo "<script> alert('Proposal  Successfully Updated') </script>";
                                     }else{
-                                        echo'An error occured ' . $conn->error; 
+                                        echo 'An error occured ' . $conn->error; 
                                     }
                                 }else{
                                     $sql_string="INSERT INTO proposal(student_id, topic, motivation, proposal)
                                     VALUES('".$stdid."', '".$topic."', '".$motivation."', '".$proposal."')";
                                     if($conn->query($sql_string)){
-                                        $notify->sendNotification($stdid, '3', 'Just uploaded my proposal', 'proposal');   
-                                        echo 'Proposal  Successfully Submitted';
+                                        $notify->sendNotification($stdid, $sup_id, $user_data['fullname'] . ' just uploaded my proposal', 'proposal');   
+                                        echo "<script> alert('Proposal  Successfully Submitted') </script>";
                                         // header('refresh:2 URL=dashboard.php');
                                     }else{
                                         echo'An error occured ' . $conn->error;
@@ -120,14 +121,14 @@
             </div>
             
 
-            <div class="col-span-1  mx-auto ">
+            <!-- <div class="col-span-1  mx-auto ">
                 <div class="bg-green-700 py-2 px-2 text-center text-gray-100 rounded-md">
                     Comments
                 </div>
-                <!-- <form action="" method="post" class="mt-3">
-                        <textarea name="correction" id="" cols="12" rows="3"></textarea>
+                <form action="" method="post" class="mt-3 text-end">
+                        <textarea name="correction" id="" cols="12" rows="1" class="w-full p-2"></textarea>
                         <button class="bg-green-600 rounded-lg py-1 px-2 mt-3 text-white block">Send</button>
-                </form> -->
+                </form>
                 <div class="bg-white shadow-lg rounded-lg py-5 px-6 mt-3">
                     <div class="py-3 px-3 rounded-lg shadow-xl ">
                         <p class="text-gray-700 text-sm">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam animi labore doloremque.</p>
@@ -143,9 +144,7 @@
                         <small class="text-gray-700 mt-4">1 hour ago</small>
                     </div>
                 </div>
-
-                
-            </div>
+            </div> -->
         </div>
         <!-- <textarea name="" id="" class="editor" cols="30" rows="10"></textarea> -->
         
@@ -179,3 +178,19 @@
         /* background-color: transparent !important; */
     }
 </style>
+
+<?php
+
+    function getSupervisorID($student_id, $conn){
+        $sql = "SELECT * FROM assign WHERE std_id = '$student_id'";
+        if($result = $conn->query($sql)){
+            if($result->num_rows > 0){
+                $data = $result->fetch_assoc();
+                return $data['supervisor_id'];
+            }else{
+                return 0;
+            }
+        }else{
+           return 0;
+        }
+    }

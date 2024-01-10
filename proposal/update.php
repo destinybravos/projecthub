@@ -5,10 +5,11 @@ $notify = new Notify;
 
 $student_id = $_POST['student_id'];
 $proposal = $_POST['proposal'];
+$sup_id = getSupervisorID($student_id, $conn);
 
 $sql_string= "UPDATE proposal SET proposal='$proposal' WHERE student_id='$student_id '";
     if($conn->query($sql_string)){
-        $notify->sendNotification('3', $stdid, 'Just updated my proposal', 'proposal');   
+        $notify->sendNotification($sup_id, $student_id, 'Your supervisor just updated my proposal', 'proposal');   
         echo json_encode([
             'status' => 'success'
         ]);
@@ -19,4 +20,17 @@ $sql_string= "UPDATE proposal SET proposal='$proposal' WHERE student_id='$studen
     }
 
 
+    function getSupervisorID($student_id, $conn){
+        $sql = "SELECT * FROM assign WHERE std_id = '$student_id'";
+        if($result = $conn->query($sql)){
+            if($result->num_rows > 0){
+                $data = $result->fetch_assoc();
+                return $data['supervisor_id'];
+            }else{
+                return 0;
+            }
+        }else{
+           return 0;
+        }
+    }
 ?>

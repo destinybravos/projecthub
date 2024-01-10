@@ -73,14 +73,14 @@
                 </div>
             </div>
 
-            <div class="col-span-1  mx-auto ">
+            <!-- <div class="col-span-1  mx-auto ">
                 <div class="bg-green-700 py-2 px-2 text-center text-gray-100 rounded-md">
                     Comments
                 </div>
-                <!-- <form action="" method="post" class="mt-3">
+                <form action="" method="post" class="mt-3">
                         <textarea name="correction" id="" cols="12" rows="3"></textarea>
                         <button class="bg-green-600 rounded-lg py-1 px-2 mt-3 text-white block">Send</button>
-                </form> -->
+                </form>
                 <div class="bg-white shadow-lg rounded-lg py-5 px-6 mt-3">
                     <div class="py-3 px-3 rounded-lg shadow-xl ">
                         <p class="text-gray-700 text-sm">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam animi labore doloremque.</p>
@@ -98,7 +98,7 @@
                 </div>
 
                 
-            </div>
+            </div> -->
         </div>
         <!-- <textarea name="" id="" class="editor" cols="30" rows="10"></textarea> -->
         

@@ -115,35 +115,73 @@
                         include_once 'connect.php';
 
                         $SN = 0;
-
-                        $user_data = $_SESSION['$user_data'];
-                        $sql = "SELECT * FROM assign WHERE std_id ='$user_data' AND supervisor_id = '$$user_data'";
+                        $user_id = $user_data['id'];
+                        if($user_data['role'] == 'admin'){
+                            $sql = "SELECT * FROM assign LEFT JOIN users ON assign.std_id = users.id";
+                        }elseif($user_data['role'] == 'student'){
+                            $sql = "SELECT * FROM assign WHERE std_id ='$user_id' LEFT JOIN users ON assign.std_id = users.id";
+                        }else{
+                            $sql = "SELECT * FROM assign WHERE supervisor_id = '$user_id' LEFT JOIN users ON assign.std_id = users.id";
+                        }
+                        
                         if($result = mysqli_query($conn, $sql)){
                             if(mysqli_num_rows($result) > 0){
-                                $user_data = mysqli_fetch_assoc($result);
-
+                                while($data = mysqli_fetch_assoc($result)){
                                 $SN++;
-                                            ?>
-                                            <div class="flex rounded-lg divide-x font-san shadow-md text-md text-gray-700">
-                                                <div class="bg-white py-2 px-2 border-gray-500 rounded-l-lg">
-                                                    <?php  echo $SN?>
-                                                </div>
-                                                <div class="bg-white py-2 px-2 flex-grow">
-                                                        <?php echo $$user_data['fullname'] ?>
-                                                </div>
-                                                <div class="bg-white py-2 px-2 w-60">
-                                                        <?php echo $$user_data['regno'] ?>
-                                                </div>
-                                                <div class="bg-white py-2 px-2 w-60">
-                                                        <?php echo $$user_data['level'] ?>
-                                                </div>
-                                                <div class="bg-white py-2 px-2 w-60 rounded-r-lg">
-                                                        <?php echo $$user_data['programme'] ?>
-                                                </div>
-                                                
-                                            </div>
-                                      <?php
-                               
+                                $data['supervisor'] = getSupervisor($data['supervisor_id'], $conn);
+                            ?>
+                                <div class="flex rounded-lg divide-x font-san shadow-md text-md text-gray-700">
+                                    <div class="bg-white py-2 px-2 border-gray-500 rounded-l-lg">
+                                        <?php  echo $SN ?>
+                                    </div>
+                                    <div class="bg-white py-2 px-2 flex-grow">
+                                            <?php echo $data['fullname'] ?>
+                                    </div>
+                                    <div class="bg-white py-2 px-2 w-60">
+                                            <?php echo $data['regno'] ?>
+                                    </div>
+                                    <div class="bg-white py-2 px-2 w-60">
+                                            <?php echo $data['level'] ?>
+                                    </div>
+                                    <div class="bg-white py-2 px-2 w-60 rounded-r-lg">
+                                            <?php echo $data['supervisor'] ?>
+                                    </div>
+                                    
+                                </div>
+                            <?php
+                                }
+                            }elseif(mysqli_num_rows($result) == 1){
+                                $data = mysqli_fetch_assoc($result);
+                                $SN++;
+                                $data['supervisor'] = getSupervisor($data['supervisor_id'], $conn);
+                            ?>
+                                <div class="flex rounded-lg divide-x font-san shadow-md text-md text-gray-700">
+                                    <div class="bg-white py-2 px-2 border-gray-500 rounded-l-lg">
+                                        <?php  echo $SN ?>
+                                    </div>
+                                    <div class="bg-white py-2 px-2 flex-grow">
+                                            <?php echo $data['fullname'] ?>
+                                    </div>
+                                    <div class="bg-white py-2 px-2 w-60">
+                                            <?php echo $data['regno'] ?>
+                                    </div>
+                                    <div class="bg-white py-2 px-2 w-60">
+                                            <?php echo $data['level'] ?>
+                                    </div>
+                                    <div class="bg-white py-2 px-2 w-60 rounded-r-lg">
+                                            <?php echo $data['supervisor'] ?>
+                                    </div>
+                                    
+                                </div>
+                            <?php
+                            }else{
+                            ?>
+                                <div class="flex rounded-lg divide-x font-san shadow-md text-md text-gray-700">
+                                    <div class="bg-white py-2 px-2 border-gray-500 rounded-l-lg">
+                                        No Supervisor or student assigned yet
+                                    </div>
+                                </div>
+                            <?php
                             }
                             
                         }
@@ -230,9 +268,26 @@
             dataType:'json',
             success: function(res) {
                 console.log(res.mes);
+                location.reload();
             }
         })
     })
     getData('searchForLecture','')
     getData('searchForStudent','')
 </script>
+
+<?php
+
+    function getSupervisor($sup_id, $conn){
+        $sql = "SELECT * FROM users WHERE id = '$sup_id'";
+        if($result = mysqli_query($conn, $sql)){
+            if(mysqli_num_rows($result) > 0){
+                $data = mysqli_fetch_assoc($result);
+                return $data['fullname'];
+            }else{
+                return "Not found";
+            }
+        }else{
+           return "Not found";
+        }
+    }

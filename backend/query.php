@@ -37,8 +37,15 @@
         $std_id=$_POST['student'];
         $super_id=$_POST['lecturer'];
 
-        $sql_string="INSERT INTO assign(std_id, supervisor_id)
-        VALUES('".$std_id."', '".$super_id."')";
+        // Check if the user have been assign already
+        $checkQuery = $conn->query("SELECT * FROM assign WHERE std_id='$std_id'");
+
+        if ($checkQuery->num_rows > 0) {
+            $sql_string="UPDATE assign SET supervisor_id='$super_id' WHERE std_id='$std_id'";
+        } else {
+            $sql_string="INSERT INTO assign(std_id, supervisor_id)
+                VALUES('".$std_id."', '".$super_id."')";
+        }
         
         if($conn->query($sql_string)){
             echo json_encode([

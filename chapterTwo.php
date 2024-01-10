@@ -42,6 +42,7 @@
                             include_once 'connect.php';
                             $stdid = $user_data['id'];
                             $notify = new Notify;
+                            $sup_id = getSupervisorID($stdid, $conn);
 
 
                             if(isset($_POST['subChp2'])){
@@ -51,34 +52,34 @@
                                 if ($query->num_rows > 0) {
                                     $sql_string= "UPDATE chapter2 SET chapter2='$chapter2', status='review' WHERE student_id='$stdid '";
                                     if($conn->query($sql_string)){
-                                        $notify->sendNotification($stdid, '3', 'Just updated my chapter two', 'chapter');   
+                                        $notify->sendNotification($stdid, $sup_id, $user_data['fullname'] . ' just updated his chapter two', 'chapter');   
                                         echo 'Chapter Two  Successfully Updated';
                                     }else{
-                                        echo'An error occured ' . $conn->error; 
+                                        echo 'An error occured ' . $conn->error; 
                                     }
                                 }else{
                                     $sql_string="INSERT INTO chapter2(student_id, chapter2)
                                     VALUES('".$stdid."','".$chapter2."')";
                                     if($conn->query($sql_string)){
-                                        $notify->sendNotification($stdid, '3', 'Just uploaded my chapter two', 'chapter');   
+                                        $notify->sendNotification($stdid, $sup_id, $user_data['fullname'] . ' just uploaded his chapter two', 'chapter');   
                                         echo 'chapter two   Successfully Submitted';
                                     }else{
-                                        echo'An error occured ' . $conn->error;
+                                        echo 'An error occured ' . $conn->error;
                                     }
                                 }
                             
                             }
 
-                             // Fetch Existing Data
-                             $exist_data = $conn->query("SELECT * FROM chapter2 WHERE student_id='$stdid'");
-                             $chapter2 = $exist_data->fetch_assoc();
+                            // Fetch Existing Data
+                            $exist_data = $conn->query("SELECT * FROM chapter2 WHERE student_id='$stdid'");
+                            $chapter2 = $exist_data->fetch_assoc();
 
                         ?>
                         
                         <div class="mt-4">
                             <label for="" class="capitalize text-gray-800 text-lg">Main-body</label>
                             <div class=" text-gray-700 rounded-lg mb-3">
-                                <textarea name="chapter2" id="editor" class="rounded-lg  bg-opacity-75 shadow-lg "></textarea>
+                                <textarea name="chapter2" id="editor" class="rounded-lg  bg-opacity-75 shadow-lg "><?php echo  isset($chapter2['chapter2']) ? $chapter2['chapter2'] : '' ?></textarea>
                                 <!-- <input type="text" id="title" v-model="title" class=" py-2 w-full px-4 outline-none border-0 rounded-lg bg-green-700 bg-opacity-75 shadow-lg h-12" placeholder="Motivation" required> -->
                             </div>
                         </div>
@@ -90,14 +91,14 @@
                 </div>
             </div>
 
-            <div class="col-span-1  mx-auto ">
+            <!-- <div class="col-span-1  mx-auto ">
                 <div class="bg-green-700 py-2 px-2 text-center text-gray-100 rounded-md">
                     Comments
                 </div>
-                <!-- <form action="" method="post" class="mt-3">
+                <form action="" method="post" class="mt-3">
                         <textarea name="correction" id="" cols="12" rows="3"></textarea>
                         <button class="bg-green-600 rounded-lg py-1 px-2 mt-3 text-white block">Send</button>
-                </form> -->
+                </form>
                 <div class="bg-white shadow-lg rounded-lg py-5 px-6 mt-3">
                     <div class="py-3 px-3 rounded-lg shadow-xl ">
                         <p class="text-gray-700 text-sm">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quibusdam animi labore doloremque.</p>
@@ -115,7 +116,7 @@
                 </div>
 
                 
-            </div>
+            </div> -->
         </div>
         <!-- <textarea name="" id="" class="editor" cols="30" rows="10"></textarea> -->
         
@@ -148,3 +149,19 @@
         /* background-color: transparent !important; */
     }
 </style>
+
+<?php
+
+    function getSupervisorID($student_id, $conn){
+        $sql = "SELECT * FROM assign WHERE std_id = '$student_id'";
+        if($result = $conn->query($sql)){
+            if($result->num_rows > 0){
+                $data = $result->fetch_assoc();
+                return $data['supervisor_id'];
+            }else{
+                return 0;
+            }
+        }else{
+           return 0;
+        }
+    }
