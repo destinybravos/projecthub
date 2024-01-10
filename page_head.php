@@ -13,6 +13,10 @@ include_once 'connect.php';
         $num_rows = mysqli_num_rows($result);
         if($num_rows > 0){
             $user_data = mysqli_fetch_assoc($result);
+            global $user_id;
+            global $connect;
+            $user_id = $user_data['id'];
+            $connect = $conn;
             if ($user_data['role'] == 'student') {
                 $supervisor = getSupervisor($user_data['id'], $conn);
             }

@@ -20,7 +20,7 @@
     <?php 
         include_once 'sidebar.php'; 
         include_once  'script.php';
-
+        $summary = getPercentage();
     ?>
 
     <!-- Main Content -->
@@ -39,7 +39,7 @@
                         <div class="text-gray-700">
                             <p class="text-2xl text-blue-600">Welcome back <span><?php echo $user_data['fullname'] ?></p></span></p>
                             <p class="capitalize text-md font-semibold text-gray-600">supervisor: <?php echo (isset($supervisor) && $supervisor != '') ? $supervisor : 'Not Assigned' ?></p>
-                            <p class="text-sm mt-2">You have gone 30% of your project.</p>
+                            <p class="text-sm mt-2">You have gone <?php echo $summary->totalPercentage ?>% of your project.</p>
                             <p class="text-sm">Keep it put to get a faster result.</p>
                         </div>
                   </div>
@@ -56,42 +56,42 @@
                         <div class="flex gap-3 mt-3">
                             <span>Proposal:</span>
                             <div class="mt-3 w-full bg-gray-200 rounded-full h-1.5">
-                                <div class="bg-green-700 h-1.5 rounded-full" style="width: 50%"></div>
+                                <div class="bg-<?php echo $summary->proposal == 100 ? 'green-500' : ($summary->proposal < 50 ? 'red-500' : 'blue-500') ?> h-1.5 rounded-full" style="width: <?php echo $summary->proposal ?>%"></div>
                             </div>
                         </div>
 
                         <div class="flex gap-3 mt-3">
                             <div class="flex-grow flex-shrink-0">Chapter One:</div>
                             <div class="mt-3 w-full bg-gray-200 rounded-full h-1.5 flex-initial">
-                                <div class="bg-green-700 h-1.5 rounded-full" style="width: 100%"></div>
+                                <div class="bg-<?php echo $summary->chapter1 == 100 ? 'green-500' : ($summary->chapter1 < 50 ? 'red-500' : 'blue-500') ?> h-1.5 rounded-full" style="width: <?php echo $summary->chapter1 ?>%"></div>
                             </div>
                         </div>
 
                         <div class="flex gap-3 mt-3">
                             <div class="flex-grow flex-shrink-0">Chapter Two:</div>
                             <div class="mt-3 w-full bg-gray-200 rounded-full h-1.5 flex-initial">
-                                <div class="bg-green-700 h-1.5 rounded-full" style="width: 40%"></div>
+                                <div class="bg-<?php echo $summary->chapter2 == 100 ? 'green-500' : ($summary->chapter2 < 50 ? 'red-500' : 'blue-500') ?> h-1.5 rounded-full" style="width: <?php echo $summary->chapter2 ?>%"></div>
                             </div>
                         </div>
 
                         <div class="flex gap-3 mt-3">
                             <div class="flex-grow flex-shrink-0">Chapter Three:</div>
                             <div class="mt-3 w-full bg-gray-200 rounded-full h-1.5 flex-initial">
-                                <div class="bg-red-700 h-1.5 rounded-full" style="width: 30%"></div>
+                                <div class="bg-<?php echo $summary->chapter3 == 100 ? 'green-500' : ($summary->chapter3 < 50 ? 'red-500' : 'blue-500') ?> h-1.5 rounded-full" style="width: <?php echo $summary->chapter3 ?>%"></div>
                             </div>
                         </div>
 
                         <div class="flex gap-3 mt-3">
                             <div class="flex-grow flex-shrink-0">Chapter Four:</div>
                             <div class="mt-3 w-full bg-gray-200 rounded-full h-1.5 flex-initial">
-                                <div class="bg-green-700 h-1.5 rounded-full" style="width: 50%"></div>
+                                <div class="bg-<?php echo $summary->chapter4 == 100 ? 'green-500' : ($summary->chapter4 < 50 ? 'red-500' : 'blue-500') ?> h-1.5 rounded-full" style="width: <?php echo $summary->chapter4 ?>%"></div>
                             </div>
                         </div>
 
                         <div class="flex gap-3 mt-3">
                             <div class="flex-grow flex-shrink-0">Chapter Five:</div>
                             <div class="mt-3 w-full bg-gray-200 rounded-full h-1.5 flex-initial">
-                                <div class="bg-red-700 h-1.5 rounded-full" style="width: 10%"></div>
+                                <div class="bg-<?php echo $summary->chapter5 == 100 ? 'green-500' : ($summary->chapter5 < 50 ? 'red-500' : 'blue-500') ?> h-1.5 rounded-full" style="width: <?php echo $summary->chapter5 ?>%"></div>
                             </div>
                         </div>
                     </div>
@@ -150,6 +150,49 @@
 </html>
 
 <?php 
+    function getPercentage(){
+        $summary = new stdClass();
+        $summary->proposal = getUnitPercent(0);
+        $summary->chapter1 = getUnitPercent(1);
+        $summary->chapter2 = getUnitPercent(2);
+        $summary->chapter3 = getUnitPercent(3);
+        $summary->chapter4 = getUnitPercent(4);
+        $summary->chapter5 = getUnitPercent(5);
 
+        $summary->totalPercentage = floor(($summary->proposal + $summary->chapter1 + $summary->chapter2 + $summary->chapter3 + $summary->chapter4 + $summary->chapter5) / 6);
+        return $summary;
+    }
 
+    function getUnitPercent($unit) : int {
+        $percent = 0;
+        $student_id = $GLOBALS['user_id'];
+        $conn = $GLOBALS['connect'];
+
+        if ($unit == 0) {
+            $query = mysqli_query($conn, "SELECT * FROM  proposal WHERE student_id='$student_id'");
+        }elseif ($unit == 1) {
+            $query = mysqli_query($conn, "SELECT * FROM  chapter1 WHERE student_id='$student_id'");
+        }elseif ($unit == 2) {
+            $query = mysqli_query($conn, "SELECT * FROM  chapter2 WHERE student_id='$student_id'");
+        }elseif ($unit == 3) {
+            $query = mysqli_query($conn, "SELECT * FROM  chapter3 WHERE student_id='$student_id'");
+        }elseif ($unit == 4) {
+            $query = mysqli_query($conn, "SELECT * FROM  chapter4 WHERE student_id='$student_id'");
+        }elseif ($unit == 5) {
+            $query = mysqli_query($conn, "SELECT * FROM  chapter5 WHERE student_id='$student_id'");
+        }
+
+        if(mysqli_num_rows($query) > 0){
+            $data = mysqli_fetch_assoc($query);
+            if ($data['status'] == 'started') {
+                $percent = 25;
+            }elseif ($data['status'] == 'approved') {
+                $percent = 100;
+            }else{
+                $percent = 60;
+            }
+        }
+
+        return $percent;
+    }
 ?>
